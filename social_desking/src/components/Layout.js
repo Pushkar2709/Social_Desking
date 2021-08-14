@@ -1,46 +1,81 @@
 import React, { Component } from 'react'
 import axios from 'axios'
+import '../styles/Layout.css'
 
 export class Layout extends Component {
     state = {
-        data12: {}
+        data: {},
+        mat: [],
+        active: null
     }
     componentDidMount() {
-        axios.get('https://mocki.io/v1/f9a0dfc5-ea66-47de-9c46-63a6a6816933')
+        axios.get('https://mocki.io/v1/0415a38c-287b-469d-8734-d1541c49a7a2')
         .then(res => {
-            // console.log(res)
             const data = res.data;
-            console.log(data)
-            this.setState({data12: data})
+            this.setState({data});
+            let temp = [], temp_mat = [];
+            for (let i = 0 ; i < data.layoutMatrix.length ; i++) {
+                if (data.layoutMatrix[i] === '(') {
+                    temp_mat.push(temp);
+                    temp = [];
+                }
+                else if (data.layoutMatrix[i] === '1')
+                temp.push(1);
+                else if (data.layoutMatrix[i] === '2')
+                temp.push(2);
+                else if (data.layoutMatrix[i] === '0')
+                temp.push(0);
+            }
+            this.setState({mat: temp_mat});
         })
         
     }
 
-    // content123 = () => {
-    //     console.log(this.state.data12.layoutMatrix)
-    // }
+    content(mat) {
+        let con = []
+        let temp = []
+        let k = '';
+        if (mat) {
+            for (let i = 0 ; i < mat.length ; i++)
+            {
+                temp = []
+                for (let j = 0 ; j < mat[i].length ; j++)
+                {
+                    k = i + '_' + j;
+                    if (mat[i][j] === 1)
+                    temp.push(<span style = {{background: this.myColor(k)}} onClick = {this.Event.bind(this)} key = {k} id = {k}></span>)
+                    else if (mat[i][j] === 2)
+                    temp.push(<span style = {{background: "lightblue"}} key = {k} id = {k}></span>)
+                    else
+                    temp.push(<span style = {{background: "grey"}} key = {k} id = {k}></span>)
+                }
+                k = 'row_' + i;
+                con.push(<p key = {k}>{temp}</p>)
+            }
+        }
+        return con;
+    }
 
-    // content(mat) {
-    //     // let con = []
-    //     // for (let i = 0 ; i < mat.length ; i++)
-    //     // {
-    //     //     for (let j = 0 ; j < mat[i].length ; j++)
-    //     //     {
-    //     //         con.push(<span>{mat[i][j]}, </span>)
-    //     //     }
-    //     // }
-    //     // return con;
-    //     let a = Array(mat);
-    //     console.log(a)
-    //     console.log(mat)
-    // }
+    myColor(pos) {
+        if (this.state.active === pos)
+        return "lightgreen";
+        else
+        return "";
+    }
+
+    Event(event) {
+        let id = event.target.attributes.id.value;
+        if (this.state.active === id)
+        this.setState({active: null});
+        else
+        this.setState({active: id});
+    }
 
     render() {
         return (
             <div>
                 {
-                    
-                    this.state.data12.layoutMatrix
+                    this.content(this.state.mat)
                 }
             </div>
         )

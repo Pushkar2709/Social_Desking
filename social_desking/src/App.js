@@ -1,11 +1,11 @@
 import './App.css';
 import Layout from './components/Layout';
-import Seats from './components/Seats';
+// import Seats from './components/Seats';
 
 function App() {
   return (
     <div className="App">
-      <Seats/>
+      {/* <Seats/> */}
       <Layout/>
     </div>
   );
